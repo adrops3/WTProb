@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VIT Projects Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="bg-light">
+
+<div class="container my-5">
+  <h2 class="text-center mb-4">VIT Project Showcase</h2>
+
+  <!-- Nav Pills -->
+  <ul class="nav nav-pills mb-3 justify-content-center" id="projectTabs">
+    <li class="nav-item">
+      <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#courseTab">Course Projects</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#ediTab">EDI Projects</button>
+    </li>
+  </ul>
+
+  <!-- Tabs Content -->
+  <div class="tab-content" id="projectTabsContent">
+    <div class="tab-pane fade show active" id="courseTab">
+      <div id="courseProjectsList" class="row"></div>
+    </div>
+    <div class="tab-pane fade" id="ediTab">
+      <div id="ediProjectsList" class="row"></div>
+    </div>
+  </div>
+
+  <!-- Form to Add Project -->
+  <div class="card mt-5">
+    <div class="card-header bg-primary text-white">
+      Add a New Project
+    </div>
+    <div class="card-body">
+      <form id="projectForm">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Project Title</label>
+            <input type="text" class="form-control" id="title" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="category" required>
+              <option value="">Select</option>
+              <option value="course">Course Project</option>
+              <option value="edi">EDI Project</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" id="description" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Add Project</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Script -->
+<script>
+  function getProjects(type) {
+    return JSON.parse(localStorage.getItem(type)) || [];
+  }
+
+  function saveProjects(type, data) {
+    localStorage.setItem(type, JSON.stringify(data));
+  }
+
+  function renderProjects(type) {
+    const projects = getProjects(type);
+    const container = type === 'course' ? $('#courseProjectsList') : $('#ediProjectsList');
+    container.html('');
+
+    if (projects.length === 0) {
+      container.html('<p class="text-muted">No projects found.</p>');
+      return;
+    }
+
+    projects.forEach((proj, index) => {
+      const card = `
+        <div class="col-md-6 mb-3">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">${proj.title}</h5>
+              <p class="card-text">${proj.description}</p>
+              <button class="btn btn-sm btn-danger" onclick="deleteProject('${type}', ${index})">Delete</button>
+            </div>
+          </div>
+        </div>`;
+      container.append(card);
+    });
+  }
+
+  function deleteProject(type, index) {
+    const projects = getProjects(type);
+    projects.splice(index, 1);
+    saveProjects(type, projects);
+    renderProjects(type);
+  }
+
+  $('#projectForm').on('submit', function (e) {
+    e.preventDefault();
+    const title = $('#title').val();
+    const description = $('#description').val();
+    const category = $('#category').val();
+
+    if (!title || !description || !category) return;
+
+    const newProject = { title, description };
+    const projects = getProjects(category);
+    projects.push(newProject);
+    saveProjects(category, projects);
+
+    renderProjects('course');
+    renderProjects('edi');
+
+    $('#projectForm')[0].reset();
+  });
+
+  // Initial rendering on load
+  $(document).ready(function () {
+    renderProjects('course');
+    renderProjects('edi');
+  });
+</script>
+</body>
+</html>
