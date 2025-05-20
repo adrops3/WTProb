@@ -1,138 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>VIT Projects Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Bootstrap CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- jQuery CDN -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</head>
-<body class="bg-light">
-
-<div class="container my-5">
-  <h2 class="text-center mb-4">VIT Project Showcase</h2>
-
-  <!-- Nav Pills -->
-  <ul class="nav nav-pills mb-3 justify-content-center" id="projectTabs">
-    <li class="nav-item">
-      <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#courseTab">Course Projects</button>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="pill" data-bs-target="#ediTab">EDI Projects</button>
-    </li>
-  </ul>
-
-  <!-- Tabs Content -->
-  <div class="tab-content" id="projectTabsContent">
-    <div class="tab-pane fade show active" id="courseTab">
-      <div id="courseProjectsList" class="row"></div>
-    </div>
-    <div class="tab-pane fade" id="ediTab">
-      <div id="ediProjectsList" class="row"></div>
-    </div>
-  </div>
-
-  <!-- Form to Add Project -->
-  <div class="card mt-5">
-    <div class="card-header bg-primary text-white">
-      Add a New Project
-    </div>
-    <div class="card-body">
-      <form id="projectForm">
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Project Title</label>
-            <input type="text" class="form-control" id="title" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Category</label>
-            <select class="form-select" id="category" required>
-              <option value="">Select</option>
-              <option value="course">Course Project</option>
-              <option value="edi">EDI Project</option>
-            </select>
-          </div>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Description</label>
-          <textarea class="form-control" id="description" rows="3" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-success">Add Project</button>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- Script -->
-<script>
-  function getProjects(type) {
-    return JSON.parse(localStorage.getItem(type)) || [];
-  }
-
-  function saveProjects(type, data) {
-    localStorage.setItem(type, JSON.stringify(data));
-  }
-
-  function renderProjects(type) {
-    const projects = getProjects(type);
-    const container = type === 'course' ? $('#courseProjectsList') : $('#ediProjectsList');
-    container.html('');
-
-    if (projects.length === 0) {
-      container.html('<p class="text-muted">No projects found.</p>');
-      return;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Responsive Layout</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Georgia, serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    projects.forEach((proj, index) => {
-      const card = `
-        <div class="col-md-6 mb-3">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">${proj.title}</h5>
-              <p class="card-text">${proj.description}</p>
-              <button class="btn btn-sm btn-danger" onclick="deleteProject('${type}', ${index})">Delete</button>
-            </div>
-          </div>
-        </div>`;
-      container.append(card);
-    });
-  }
+    .container {
+      width: 90%;
+      max-width: 800px;
+      border: 2px solid #0a2a43;
+      display: flex;
+      flex-direction: column;
+    }
 
-  function deleteProject(type, index) {
-    const projects = getProjects(type);
-    projects.splice(index, 1);
-    saveProjects(type, projects);
-    renderProjects(type);
-  }
+    header, footer {
+      height: 50px;
+      border-bottom: 1px solid #ccc;
+    }
 
-  $('#projectForm').on('submit', function (e) {
-    e.preventDefault();
-    const title = $('#title').val();
-    const description = $('#description').val();
-    const category = $('#category').val();
+    footer {
+      border-top: 1px solid #ccc;
+    }
 
-    if (!title || !description || !category) return;
+    main {
+      flex: 1;
+      display: flex;
+    }
 
-    const newProject = { title, description };
-    const projects = getProjects(category);
-    projects.push(newProject);
-    saveProjects(category, projects);
+    .side {
+      flex: 1;
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+    }
 
-    renderProjects('course');
-    renderProjects('edi');
+    .center-content {
+      flex: 2;
+      border-left: 1px solid #0a2a43;
+      border-right: 1px solid #0a2a43;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
 
-    $('#projectForm')[0].reset();
-  });
+    .message-box {
+      border: 1px solid #0a2a43;
+      padding: 40px 20px;
+      text-align: center;
+      background-color: white;
+      transition: background-color 0.3s ease;
+    }
 
-  // Initial rendering on load
-  $(document).ready(function () {
-    renderProjects('course');
-    renderProjects('edi');
-  });
-</script>
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      border-top: 1px solid #0a2a43;
+      padding: 10px 0;
+      width: 100%;
+    }
+
+    .color-btn {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      border: 2px solid black;
+      cursor: pointer;
+    }
+
+    .blue { background-color: steelblue; }
+    .red { background-color: indianred; }
+    .orange { background-color: orange; }
+
+    @media (max-width: 600px) {
+      .container {
+        flex-direction: column;
+      }
+      main {
+        flex-direction: column;
+      }
+      .side {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header></header>
+
+    <main>
+      <div class="side"></div>
+      <div class="center-content">
+        <div class="message-box" id="messageBox">
+          <p>This section should change colour after<br>clicking on following buttons</p>
+        </div>
+        <div class="buttons">
+          <div class="color-btn blue" onclick="changeColor('steelblue')"></div>
+          <div class="color-btn red" onclick="changeColor('indianred')"></div>
+          <div class="color-btn orange" onclick="changeColor('orange')"></div>
+        </div>
+      </div>
+      <div class="side"></div>
+    </main>
+
+    <footer></footer>
+  </div>
+
+  <script>
+    function changeColor(color) {
+      document.getElementById('messageBox').style.backgroundColor = color;
+    }
+  </script>
+
 </body>
 </html>
